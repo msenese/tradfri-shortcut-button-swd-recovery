@@ -30,6 +30,10 @@ The working theory: a brownout during a flash write operation (triggered by the 
 - Board revision: D-SW-X1-02-A-V2.0, dated 2019-9-4
 - The board has labeled test pads on the back: `REST`, `VCC`, `TMS`, `CLK`, `GND` (plus `RX`/`TX` for UART, unused here)
 
+![Board with case open, showing the EFR32MG1P chip and board revision marking](images/board-chip-side.webp)
+
+![Board back showing labeled SWD test pads](images/board-back-pinout.jpeg)
+
 ## Tools Used
 
 | Tool | Purpose |
@@ -39,6 +43,8 @@ The working theory: a brownout during a flash write operation (triggered by the 
 | zigpy-cli | Strips IKEA's OTA signature wrapper to expose the raw firmware image |
 | Simplicity Commander (CLI) | Converts the extracted `.gbl` into a properly-addressed `.hex` file |
 | Debugger | Generic $6 "ST-Link V2" clone — works as a vendor-agnostic SWD probe for any ARM Cortex-M chip, not just ST's own silicon |
+
+![Generic ST-Link V2 clone debug probe with jumper wires](images/st-link-probe.webp)
 
 ## Wiring
 
@@ -52,6 +58,8 @@ The working theory: a brownout during a flash write operation (triggered by the 
 VCC was connected to the debugger's 3.3V pin to power the board directly (no battery installed during the procedure).
 
 Connections were made with fine solder-tack wiring directly to the labeled pads, no permanent soldering, no pogo-pin jig required.
+
+![Debugger connected to the board on the workbench](images/debugger-and-board-setup.png)
 
 ## Procedure
 
