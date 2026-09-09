@@ -1,16 +1,16 @@
 # Reviving a Dead IKEA TRÅDFRI Shortcut Button via SWD Firmware Recovery
 
-A $12 IKEA TRÅDFRI Shortcut Button (E1812), bought on closeout, died from a documented low-battery firmware bug — and was never actually used before it failed. This repo documents the full recovery: diagnosis, root cause, tooling, and the direct-to-chip firmware flash that brought it back to life.
+A $12 IKEA TRÅDFRI Shortcut Button (E1812), bought on closeout, died from a documented low-battery firmware bug. Extra frustrating because it was never actually used before it failed. This repo documents the full recovery: diagnosis, root cause, tooling, and the direct-to-chip firmware flash that brought it back to life.
 
 ## The Problem
 
-The button paired to Home Assistant (ZHA) successfully but was set aside unused. At some point its original battery drained to a critically low voltage. When a fresh battery was installed, the device would rejoin the Zigbee network and report basic attributes (battery %, LQI) — but any command sent to it failed with:
+The button paired to Home Assistant (ZHA) successfully but was set aside unused. At some point its original battery drained to a critically low voltage. When a fresh battery was installed, the device would rejoin the Zigbee network and report basic attributes (battery %, LQI). However, any command sent to it failed with:
 
 ```
 Failed to send request: <Status.NWK_NO_ROUTE: 205>
 ```
 
-This happened consistently even at point-blank range from the Zigbee coordinator, and survived multiple factory resets and rejoin attempts — ruling out mesh topology/routing as the cause.
+This happened consistently even at point-blank range from the Zigbee coordinator, and survived multiple factory resets and rejoin attempts, ruling out mesh topology/routing as the cause.
 
 ## Root Cause
 
@@ -22,7 +22,7 @@ IKEA's own official release notes (v2.3.080, released 27 Oct 2021) confirm a kno
 
 Source: https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html
 
-The working theory: a brownout during a flash write operation (triggered by the critically low battery voltage) left the chip's application firmware in a corrupted state — alive enough to join the network and report simple attributes, but unable to complete bidirectional command handshakes. Since the device could no longer reliably communicate, the normal wireless (OTA) update path that would have delivered the fix was itself unusable — a catch-22 that required bypassing the radio entirely.
+The working theory: a brownout during a flash write operation (triggered by the critically low battery voltage) left the chip's application firmware in a corrupted state: alive enough to join the network and report simple attributes, but unable to complete bidirectional command handshakes. Since the device could no longer reliably communicate, the normal wireless (OTA) update path that would have delivered the fix was itself unusable, a catch-22 that required bypassing the radio entirely.
 
 ## Hardware
 
@@ -51,7 +51,7 @@ The working theory: a brownout during a flash write operation (triggered by the 
 
 VCC was connected to the debugger's 3.3V pin to power the board directly (no battery installed during the procedure).
 
-Connections were made with fine solder-tack wiring directly to the labeled pads — no permanent soldering, no pogo-pin jig required.
+Connections were made with fine solder-tack wiring directly to the labeled pads, no permanent soldering, no pogo-pin jig required.
 
 ## Procedure
 
@@ -128,7 +128,7 @@ GBL files carry their own internal addressing; converting to `.hex` (rather than
 commander convert shortcut-24.4.6.gbl --outfile shortcut-24.4.6.hex
 ```
 
-This is a pure file-format conversion — no debugger connection required.
+This is a pure file-format conversion, no debugger connection required.
 
 ### 6. Flash it
 
@@ -151,7 +151,7 @@ Note: a naive `restore <file>` from within GDB will be rejected — `Writing to 
 
 ## Result
 
-Immediately after `reset run`, the device resumed communicating on the Zigbee network — using its original network credentials, no repairing needed. The exact command that had failed with `NWK_NO_ROUTE` on every previous attempt (`button.press` on the identify entity) succeeded cleanly on the first try post-flash.
+Immediately after `reset run`, the device resumed communicating on the Zigbee network, using its original network credentials, no repairing needed. The exact command that had failed with `NWK_NO_ROUTE` on every previous attempt (`button.press` on the identify entity) succeeded cleanly on the first try post-flash.
 
 The button is now wired into Home Assistant to toggle a smart plug on each press.
 
